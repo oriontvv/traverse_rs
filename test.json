@@ -1,0 +1,16 @@
+{
+    "aspects":{
+        "qwe": {
+            "asd": [
+                {"asd": "ASD"},
+                {"as1": "ASD"}
+            ],
+            "asdd": 23,
+            "zxcx": 0
+        },
+        "zcxc": false,
+        "asdf": [
+            {"2": null}
+        ]
+    }
+}

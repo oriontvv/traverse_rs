@@ -1,2 +1,2 @@
-# json_traverse_rs
+# traverse_rs
 Simple study project to learn rust language
