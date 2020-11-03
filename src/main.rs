@@ -1,7 +1,6 @@
 extern crate serde;
 extern crate serde_json;
 
-use std::time::Instant;
 use std::fs::File;
 use std::path::Path;
 
@@ -9,9 +8,7 @@ use clap::{Arg, App, ArgMatches};
 use serde_json::Value;
 use regex::RegexSet;
 
-
-static PATH: &str = "./test.json";
-
+static PATH: &str = "/home/socexp/dump/socexp_aspects.dump";
 
 trait Finder {
     fn check(&self, string: &str) -> bool;
@@ -54,22 +51,27 @@ struct RegexpFinder {
 
 impl Finder for RegexpFinder {
     fn check(&self, string: &str) -> bool {
-        false
+        self.reg_exps.matches(string).matched_any()
     }
 }
 
-// fn create_finder(is_regexp: bool, conditions: Vec<&str>) -> Box<dyn Finder> {
-//     if is_regexp {
-//         Box::new(RegexpFinder { reg_exps: RegexSet::new(conditions).expect("Invalid regex") })
-//     } else {
-//         Box::new(StringFinder { conditions: conditions })
-//     }
-// }
+fn create_finder<'a>(is_regexp: bool, conditions: Vec<&'a str>) -> Box<dyn Finder + 'a> {
+    if is_regexp {
+        let regexps = RegexSet::new(conditions).expect("Invalid regex");
+        Box::new(RegexpFinder { reg_exps: regexps })
+    } else {
+        Box::new(StringFinder { conditions:conditions })
+    }
+}
 
 fn parse_args() -> ArgMatches<'static> {
     App::new("Simple Finder")
         .version("0.1.0")
         .about("Finder in json")
+        .arg(Arg::with_name("path")
+                .long("path")
+                .default_value(PATH)
+                .help("path "))
         .arg(Arg::with_name("regexp")
                 .long("regexp")
                 .takes_value(false)
@@ -84,20 +86,15 @@ fn parse_args() -> ArgMatches<'static> {
 }
 
 fn main() {
-    let start = Instant::now();
-
     let args = parse_args();
     let is_regexp = args.is_present("regexp");
+    let file_path = Path::new(args.value_of("path").unwrap());
     let conditions: Vec<_> = args.values_of("conditions").unwrap().collect();
     
-    // let finder = create_finder(is_regexp, conditions);
+    let finder = create_finder(is_regexp, conditions);
 
-    let file_path = Path::new(PATH);
     let json_file = File::open(file_path).expect("file not found");
-    let data: Value = serde_json::from_reader(json_file).expect("error while reading json");
+    let mut data: Value = serde_json::from_reader(json_file).expect("error while reading json");
 
-    // finder.find(String::from(""), &data["aspects"].take());
-
-    let elapsed = start.elapsed();
-    println!("Elapsed: {:.2?}", elapsed);
+    finder.find(String::from(""), &data["aspects"].take());
 }
