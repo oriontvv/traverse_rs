@@ -24,7 +24,7 @@ jobs:
       - name: archive
         run: |
           GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo $REPO_NAME
+          echo ${REPO_NAME}
           tar -C target/release -czf $(pwd)/${REPO_NAME}-${GIT_TAG}-travis.tar.gz ${REPO_NAME}
         env:
           REPO_NAME: ${{ github.repository.name }}
