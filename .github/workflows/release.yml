@@ -15,21 +15,6 @@ jobs:
   #       run: |
   #         cargo package
   #         cargo publish --token ${{ secrets.CARGO_TOKEN }}
-  # release:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: Build project
-  #       run: cargo build --release --locked
-  #     - name: Upload binary to release
-  #       uses: svenstaro/upload-release-action@v1-release
-  #       with:
-  #         repo_token: ${{ secrets.GITHUB_TOKEN }}
-  #         file: target/release/traverse_rs
-  #         asset_name: traverse_rs-linux-amd64
-  #         tag: ${{ steps.bump_version.outputs.new_tag }}
-  #         overwrite: true
 
   build:
     runs-on: ubuntu-latest
@@ -57,6 +42,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/traverse_rs_amd64
+          asset_name: traverse_rs_amd64
+          tag: ${{ steps.bump_version.outputs.new_tag }}
+          overwrite: true
+
   build-win:
     runs-on: windows-latest
 
@@ -81,6 +75,15 @@ jobs:
           files: target/release/traverse_rs.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/traverse_rs.exe
+          asset_name: traverse_rs.exe
+          tag: ${{ steps.bump_version.outputs.new_tag }}
+          overwrite: true
   
   build-mac:
     runs-on: macos-latest
@@ -107,4 +110,12 @@ jobs:
             target/release/traverse_rs_darwin
         env:
           GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
-
+    
+      - name: Upload binary
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/traverse_rs_darwin
+          asset_name: traverse_rs_darwin
+          tag: ${{ steps.bump_version.outputs.new_tag }}
+          overwrite: true
