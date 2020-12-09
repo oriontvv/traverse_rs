@@ -100,3 +100,17 @@ fn main() {
 
     finder.find(String::from(""), &data["aspects"].take());
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn dummy_test() {
+        let data = json!([]);
+        let finder = create_finder(false, vec!());
+        finder.find(String::from(""), &data);
+    }
+}
