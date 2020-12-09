@@ -1,0 +1,36 @@
+
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+env:
+  PROJECT_NAME: traverse_rs
+
+jobs:
+  # release-crates:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: publish package to crates
+  #       run: |
+  #         cargo package
+  #         cargo publish --token ${{ secrets.CARGO_TOKEN }}
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: cargo build --release
+      - name: archive
+        run: |
+          GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          tar -C target/release -czf $(pwd)/$PROJECT_NAME-${GIT_TAG}-travis.tar.gz $PROJECT_NAME
+      - name: publish release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: $PROJECT_NAME-*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
