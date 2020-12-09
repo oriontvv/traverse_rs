@@ -48,7 +48,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/release/traverse_rs_amd64
           asset_name: traverse_rs_amd64
-          tag: $(git describe --tags `git rev-list --tags --max-count=1`)
+          tag: ${{ github.ref }}
           overwrite: true
 
   build-win:
@@ -82,7 +82,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/release/traverse_rs.exe
           asset_name: traverse_rs.exe
-          tag: $(git describe --tags `git rev-list --tags --max-count=1`)
+          tag: ${{ github.ref }}
           overwrite: true
   
   build-mac:
@@ -117,5 +117,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/release/traverse_rs_darwin
           asset_name: traverse_rs_darwin
-          tag: $(git describe --tags `git rev-list --tags --max-count=1`)
+          tag: ${{ github.ref }}
           overwrite: true
