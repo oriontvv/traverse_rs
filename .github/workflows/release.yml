@@ -27,9 +27,10 @@ jobs:
           tar -C target/release -czf $(pwd)/${{ REPO_NAME }}-${GIT_TAG}-travis.tar.gz ${{ REPO_NAME }}
         env:
           REPO_NAME: ${{ github.repository.name }}
-      - name: publish release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ${{ REPO_NAME }}-*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: publish release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: ${{ REPO_NAME }}-*.tar.gz
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     REPO_NAME: ${{ github.repository.name }}
