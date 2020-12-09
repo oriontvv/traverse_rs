@@ -23,7 +23,7 @@ trait Finder {
             }
         } else if data.is_array() {
             let array = data.as_array().unwrap();
-            for (index, value) in array.into_iter().enumerate() {
+            for (index, value) in array.iter().enumerate() {
                 let new_path = format!("{}[{}]", path.clone(), index);
                 self.find(new_path, value);
             }
@@ -58,12 +58,10 @@ impl Finder for RegexpFinder {
 
 fn create_finder<'a>(is_regexp: bool, conditions: Vec<&'a str>) -> Box<dyn Finder + 'a> {
     if is_regexp {
-        let regexps = RegexSet::new(conditions).expect("Invalid regex");
-        Box::new(RegexpFinder { reg_exps: regexps })
+        let reg_exps = RegexSet::new(conditions).expect("Invalid regex");
+        Box::new(RegexpFinder { reg_exps })
     } else {
-        Box::new(StringFinder {
-            conditions: conditions,
-        })
+        Box::new(StringFinder { conditions })
     }
 }
 
