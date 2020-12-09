@@ -3,6 +3,7 @@ extern crate serde_json;
 
 use std::fs::File;
 use std::path::Path;
+use std::io::BufReader;
 
 use clap::{Arg, App, ArgMatches};
 use serde_json::Value;
@@ -71,7 +72,7 @@ fn parse_args() -> ArgMatches<'static> {
         .arg(Arg::with_name("path")
                 .long("path")
                 .default_value(PATH)
-                .help("path "))
+                .help("path to dump file"))
         .arg(Arg::with_name("regexp")
                 .long("regexp")
                 .takes_value(false)
@@ -94,7 +95,8 @@ fn main() {
     let finder = create_finder(is_regexp, conditions);
 
     let json_file = File::open(file_path).expect("file not found");
-    let mut data: Value = serde_json::from_reader(json_file).expect("error while reading json");
+    let reader = BufReader::new(json_file);
+    let mut data: Value = serde_json::from_reader(reader).expect("error while reading json");
 
     finder.find(String::from(""), &data["aspects"].take());
 }
