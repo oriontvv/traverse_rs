@@ -2,12 +2,12 @@ extern crate serde;
 extern crate serde_json;
 
 use std::fs::File;
-use std::path::Path;
 use std::io::BufReader;
+use std::path::Path;
 
-use clap::{Arg, App, ArgMatches};
-use serde_json::Value;
+use clap::{App, Arg, ArgMatches};
 use regex::RegexSet;
+use serde_json::Value;
 
 static PATH: &str = "/home/socexp/dump/socexp_aspects.dump";
 
@@ -37,7 +37,7 @@ trait Finder {
 }
 
 struct StringFinder<'a> {
-    pub conditions: Vec<&'a str>
+    pub conditions: Vec<&'a str>,
 }
 
 impl Finder for StringFinder<'_> {
@@ -47,7 +47,7 @@ impl Finder for StringFinder<'_> {
 }
 
 struct RegexpFinder {
-    pub reg_exps: RegexSet
+    pub reg_exps: RegexSet,
 }
 
 impl Finder for RegexpFinder {
@@ -61,7 +61,9 @@ fn create_finder<'a>(is_regexp: bool, conditions: Vec<&'a str>) -> Box<dyn Finde
         let regexps = RegexSet::new(conditions).expect("Invalid regex");
         Box::new(RegexpFinder { reg_exps: regexps })
     } else {
-        Box::new(StringFinder { conditions:conditions })
+        Box::new(StringFinder {
+            conditions: conditions,
+        })
     }
 }
 
@@ -69,20 +71,26 @@ fn parse_args() -> ArgMatches<'static> {
     App::new("Simple Finder")
         .version("0.1.0")
         .about("Finder in json")
-        .arg(Arg::with_name("path")
+        .arg(
+            Arg::with_name("path")
                 .long("path")
                 .default_value(PATH)
-                .help("path to dump file"))
-        .arg(Arg::with_name("regexp")
+                .help("path to dump file"),
+        )
+        .arg(
+            Arg::with_name("regexp")
                 .long("regexp")
                 .takes_value(false)
-                .help("use regexp"))
-        .arg(Arg::with_name("conditions")
+                .help("use regexp"),
+        )
+        .arg(
+            Arg::with_name("conditions")
                 .long("conditions")
                 .takes_value(true)
                 .required(true)
                 .multiple(true)
-                .help("list of conditions"))
+                .help("list of conditions"),
+        )
         .get_matches()
 }
 
@@ -91,7 +99,7 @@ fn main() {
     let is_regexp = args.is_present("regexp");
     let file_path = Path::new(args.value_of("path").unwrap());
     let conditions: Vec<_> = args.values_of("conditions").unwrap().collect();
-    
+
     let finder = create_finder(is_regexp, conditions);
 
     let json_file = File::open(file_path).expect("file not found");
@@ -101,7 +109,6 @@ fn main() {
     finder.find(String::from(""), &data["aspects"].take());
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -110,7 +117,7 @@ mod tests {
     #[test]
     fn dummy_test() {
         let data = json!([]);
-        let finder = create_finder(false, vec!());
+        let finder = create_finder(false, vec![]);
         finder.find(String::from(""), &data);
     }
 }
