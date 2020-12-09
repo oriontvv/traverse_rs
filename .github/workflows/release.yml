@@ -18,16 +18,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: build
-        run: cargo build --release
-      - name: archive
-        run: |
-          GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          tar -C target/release -czf $(pwd)/traverse_rs-${GIT_TAG}-travis.tar.gz traverse_rs
-      - name: publish release
-        uses: softprops/action-gh-release@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build project
+        run: cargo build --release --locked
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v1-release
         with:
-          files: traverse_rs-*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/traverse_rs
+          asset_name: traverse_rs-linux-amd64
+          tag: ${{ steps.bump_version.outputs.new_tag }}
+          overwrite: true
