@@ -15,18 +15,96 @@ jobs:
   #       run: |
   #         cargo package
   #         cargo publish --token ${{ secrets.CARGO_TOKEN }}
-  release:
+  # release:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+  #     - name: Build project
+  #       run: cargo build --release --locked
+  #     - name: Upload binary to release
+  #       uses: svenstaro/upload-release-action@v1-release
+  #       with:
+  #         repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #         file: target/release/traverse_rs
+  #         asset_name: traverse_rs-linux-amd64
+  #         tag: ${{ steps.bump_version.outputs.new_tag }}
+  #         overwrite: true
+
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build project
-        run: cargo build --release --locked
-      - name: Upload binary to release
-        uses: svenstaro/upload-release-action@v1-release
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/traverse_rs
-          asset_name: traverse_rs-linux-amd64
-          tag: ${{ steps.bump_version.outputs.new_tag }}
-          overwrite: true
+          toolchain: stable
+          default: true
+          override: true
+      
+      - name: Build
+        run: cargo build --all --release && strip target/release/traverse_rs && mv target/release/traverse_rs target/release/traverse_rs_amd64
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/traverse_rs_amd_64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-win:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions-rs/toolchain@v1
+      
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+
+      - name: Build
+        run: cargo build --all --release
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: target/release/traverse_rs.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  build-mac:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Install latest rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-apple-darwin
+          default: true
+
+      - name: Build for mac
+        run: cargo build --all --release && strip target/release/traverse_rs && mv target/release/traverse_rs target/release/traverse_rs_darwin
+
+      - name: Release
+        uses: softprops/actions-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            target/release/traverse_rs_darwin
+        env:
+          GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
+
