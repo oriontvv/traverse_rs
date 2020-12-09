@@ -24,14 +24,10 @@ jobs:
       - name: archive
         run: |
           GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          echo $(REPO_NAME)
-          tar -C target/release -czf $(pwd)/$(REPO_NAME)-${GIT_TAG}-travis.tar.gz $(REPO_NAME)
+          tar -C target/release -czf $(pwd)/traverse_rs-${GIT_TAG}-travis.tar.gz traverse_rs
+      - name: publish release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: traverse_rs-*.tar.gz
         env:
-          REPO_NAME: ${{ github.repository.name }}
-      # - name: publish release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: ${{ REPO_NAME }}-*.tar.gz
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     REPO_NAME: ${{ github.repository.name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
