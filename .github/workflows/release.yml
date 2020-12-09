@@ -27,10 +27,10 @@ jobs:
       - name: archive
         run: |
           GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          tar -C target/release -czf $(pwd)/$PROJECT_NAME-${GIT_TAG}-travis.tar.gz $PROJECT_NAME
+          tar -C target/release -czf $(pwd)/${PROJECT_NAME}-${GIT_TAG}-travis.tar.gz ${PROJECT_NAME}
       - name: publish release
         uses: softprops/action-gh-release@v1
         with:
-          files: $PROJECT_NAME-*.tar.gz
+          files: ${PROJECT_NAME}-*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
