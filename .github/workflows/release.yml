@@ -33,23 +33,29 @@ jobs:
       - name: Build
         run: cargo build --all --release && strip target/release/traverse_rs && mv target/release/traverse_rs target/release/traverse_rs_amd64
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/traverse_rs_amd_64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload binary
-        uses: svenstaro/upload-release-action@v1-release
+        uses: actions/upload-artifact@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/traverse_rs_amd64
-          asset_name: traverse_rs_amd64
-          tag: ${{ github.ref }}
-          overwrite: true
+          name: traverse_rs_amd64
+          path: target/release/traverse_rs_amd64
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     files: |
+      #       target/release/traverse_rs_amd_64
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Upload binary
+      #   uses: svenstaro/upload-release-action@v1-release
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/release/traverse_rs_amd64
+      #     asset_name: traverse_rs_amd64
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
 
   build-win:
     runs-on: windows-latest
@@ -67,23 +73,29 @@ jobs:
 
       - name: Build
         run: cargo build --all --release
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: target/release/traverse_rs.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Upload binary
-        uses: svenstaro/upload-release-action@v1-release
+        uses: actions/upload-artifact@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/traverse_rs.exe
-          asset_name: traverse_rs.exe
-          tag: ${{ github.ref }}
-          overwrite: true
+          name: traverse_rs.exe
+          path: target/release/traverse_rs.exe
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     files: target/release/traverse_rs.exe
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # - name: Upload binary
+      #   uses: svenstaro/upload-release-action@v1-release
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/release/traverse_rs.exe
+      #     asset_name: traverse_rs.exe
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
   
   build-mac:
     runs-on: macos-latest
@@ -102,20 +114,26 @@ jobs:
       - name: Build for mac
         run: cargo build --all --release && strip target/release/traverse_rs && mv target/release/traverse_rs target/release/traverse_rs_darwin
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: |
-            target/release/traverse_rs_darwin
-        env:
-          GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
-    
       - name: Upload binary
-        uses: svenstaro/upload-release-action@v1-release
+        uses: actions/upload-artifact@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/traverse_rs_darwin
-          asset_name: traverse_rs_darwin
-          tag: ${{ github.ref }}
-          overwrite: true
+          name: traverse_rs_darwin
+          path: target/release/traverse_rs_darwin
+
+      # - name: Release
+      #   uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     files: |
+      #       target/release/traverse_rs_darwin
+      #   env:
+      #     GITHUB_TOKEN: $ {{ secrests.GITHUB_TOKEN }}
+    
+      # - name: Upload binary
+      #   uses: svenstaro/upload-release-action@v1-release
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: target/release/traverse_rs_darwin
+      #     asset_name: traverse_rs_darwin
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
